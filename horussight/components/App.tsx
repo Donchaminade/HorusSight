@@ -137,6 +137,13 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView, t }
   const totalVuls = scans.reduce((acc: number, s: any) => acc + (s.vulnerabilities?.length || 0), 0);
   const criticalVuls = scans.reduce((acc: number, s: any) => acc + (s.vulnerabilities?.filter((v: any) => v.severity === 'Critical').length || 0), 0);
 
+  const statusCards = [
+    { label: 'Total Scans', value: scans.length, icon: Target, color: 'text-indigo-400', gradient: 'from-indigo-600/5' },
+    { label: 'Active Targets', value: new Set(scans.map((s: any) => s.target)).size, icon: Activity, color: 'text-emerald-400', gradient: 'from-emerald-600/5' },
+    { label: 'Vuln.', value: totalVuls, icon: AlertTriangle, color: 'text-orange-400', gradient: 'from-orange-600/5' },
+    { label: 'Critical', value: criticalVuls, icon: Shield, color: 'text-rose-500', gradient: 'from-rose-600/5' },
+  ];
+
   return (
     <div className="space-y-5 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <header className="relative py-6 md:py-12 mb-6 md:mb-12 border-b border-scan-border/40 group overflow-hidden">
