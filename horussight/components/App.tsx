@@ -115,10 +115,10 @@ const Button = ({ children, onClick, variant = 'primary', icon: Icon, loading, c
 };
 
 const Card = ({ children, title, subtitle, icon: Icon, className = '' }: any) => (
-  <div className={`scan-card p-4 sm:p-6 md:p-8 lg:p-10 ${className}`}>
+  <div className={`scan-card p-6 sm:p-8 md:p-10 lg:p-14 ${className}`}>
     {(title || Icon) && (
       <div className="flex items-center gap-3 mb-5 md:mb-8">
-        {Icon && <div className="p-2 md:p-3 bg-scan-surface/40 shadow-inner rounded-xl md:rounded-2xl text-indigo-400"><Icon className="w-5 h-5 md:w-6 md:h-6" /></div>}
+        {Icon && <div className="p-3 md:p-4 bg-scan-surface/40 shadow-inner rounded-xl md:rounded-[1.5rem] text-indigo-400"><Icon className="w-6 h-6 md:w-8 md:h-8" /></div>}
         <div>
           <h3 className="text-xs md:text-sm font-black text-scan-text-muted uppercase tracking-[0.2em]">{title}</h3>
           {subtitle && <p className="text-xs md:text-sm text-scan-text-muted mt-1 md:mt-2">{subtitle}</p>}
@@ -189,12 +189,12 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView, t }
             <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black text-scan-text tracking-[-0.05em] uppercase leading-[0.8] drop-shadow-2xl">
               {t('dashboard', 'welcome')}
             </h1>
-            <p className="text-sm md:text-2xl text-scan-text-muted max-w-3xl font-medium border-l-4 border-indigo-600/30 pl-8 py-2 leading-relaxed">
+            <p className="text-sm md:text-2xl text-scan-text-muted max-w-3xl font-semibold border-l-4 border-indigo-600/30 pl-8 py-2 leading-relaxed">
               {t('dashboard', 'monitoring_metrics')}
             </p>
           </div>
           <div className="flex gap-3">
-            <Button variant="secondary" icon={Terminal} onClick={() => setView('logs')} className="!px-4 !py-3 uppercase tracking-widest !text-xs">Logs</Button>
+            <Button variant="secondary" icon={Terminal} onClick={() => setView('logs')} className="!px-4 !py-3 uppercase tracking-widest !text-xs">{t('sidebar', 'terminal')}</Button>
             <Button icon={Search} onClick={onNewScan} guided className="!px-6 !py-3 md:!px-10 md:!py-4">{t('dashboard', 'start_scan_title')}</Button>
           </div>
         </div>
@@ -230,7 +230,7 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView, t }
           </Card>
         ))}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-12">
         <Card title="Threat Intelligence Matrix" icon={BrainCircuit}>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -289,7 +289,7 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView, t }
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mt-12">
         <div className="lg:col-span-2">
           <Card title={t('dashboard', 'feed_title')} icon={Activity}>
             <div className="overflow-x-auto">
@@ -347,7 +347,7 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView, t }
                   </div>
                   <p className="text-xs text-scan-text font-mono break-all">{log.source} → {log.target}</p>
                   <p className="text-[10px] text-indigo-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" /> Fix: {log.solution}
+                    <CheckCircle2 className="w-3 h-3" /> {t('logs', 'remediation')}: {log.solution}
                   </p>
                 </div>
               ))}
@@ -381,7 +381,7 @@ const NewScan = ({ onStartScan, loading, t }: any) => {
           <Target className="w-8 h-8" />
         </div>
         <h1 className="text-3xl font-black tracking-tighter uppercase text-scan-text">{t('dashboard', 'start_scan_title')}</h1>
-        <p className="text-scan-text-muted font-medium">{t('dashboard', 'start_scan_title')}</p>
+        <p className="text-scan-text-muted font-semibold">{t('dashboard', 'start_scan_title')}</p>
       </div>
 
       <Card className="p-8 bg-slate-900 shadow-inner">
@@ -544,7 +544,7 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme, la
                 className="text-4xl sm:text-6xl md:text-8xl lg:text-[10rem] font-black text-scan-text tracking-[-0.07em] leading-[0.8] uppercase drop-shadow-2xl"
                 dangerouslySetInnerHTML={{ __html: slides[currentSlide].title }}
               />
-              <p className="text-lg md:text-2xl lg:text-3xl text-scan-text-muted leading-relaxed max-w-3xl font-medium mx-auto md:mx-0 border-l-4 border-indigo-600/20 pl-8 py-2">
+              <p className="text-lg md:text-2xl lg:text-3xl text-scan-text-muted leading-relaxed max-w-3xl font-semibold mx-auto md:mx-0 border-l-4 border-indigo-600/20 pl-8 py-2">
                 {slides[currentSlide].desc}
               </p>
 
@@ -598,7 +598,7 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme, la
                 <span className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">Module Ghost Infiltration</span>
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-black text-scan-text uppercase tracking-tighter leading-tight">{t('dashboard', 'start_scan_title')}</h2>
-              <p className="text-sm md:text-base lg:text-xl text-scan-text-muted leading-relaxed font-medium">
+              <p className="text-sm md:text-base lg:text-xl text-scan-text-muted leading-relaxed font-semibold">
                 {t('landing', 'feature_speed_desc')}
               </p>
             </div>
@@ -651,7 +651,7 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme, la
                     <f.icon className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12" />
                   </div>
                   <h3 className="text-2xl md:text-3xl lg:text-4xl font-black text-scan-text uppercase tracking-tight leading-tight">{f.title}</h3>
-                  <p className="text-sm md:text-base lg:text-xl text-scan-text-muted leading-relaxed font-medium opacity-80">{f.desc}</p>
+                  <p className="text-sm md:text-base lg:text-xl text-scan-text-muted leading-relaxed font-semibold opacity-80">{f.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -669,7 +669,7 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme, la
             </div>
             <h2 className="text-3xl sm:text-5xl md:text-7xl lg:text-9xl font-black text-scan-text uppercase tracking-tighter leading-none italic" dangerouslySetInnerHTML={{ __html: t('landing', 'arch_title') }}>
             </h2>
-            <p className="text-scan-text-muted max-w-3xl mx-auto text-base md:text-xl lg:text-2xl font-medium opacity-70">
+            <p className="text-scan-text-muted max-w-3xl mx-auto text-base md:text-xl lg:text-2xl font-semibold opacity-70">
               {t('landing', 'arch_subtitle')}
             </p>
           </div>
@@ -686,7 +686,7 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme, la
                   <s.icon className="w-7 h-7 md:w-10 md:h-10" />
                 </div>
                 <h4 className="text-xl md:text-2xl lg:text-3xl font-black text-scan-text mb-4 uppercase tracking-wide leading-tight group-hover:text-indigo-500 transition-colors">{s.title}</h4>
-                <p className="text-sm md:text-base lg:text-lg text-scan-text-muted leading-relaxed font-medium mb-auto">{s.desc}</p>
+                <p className="text-sm md:text-base lg:text-lg text-scan-text-muted leading-relaxed font-semibold mb-auto">{s.desc}</p>
               </div>
             ))}
           </div>
@@ -702,7 +702,7 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme, la
                 <Shield className="w-10 h-10 md:w-14 md:h-14 text-indigo-600" />
                 <span className="font-black text-2xl md:text-3xl lg:text-4xl tracking-[0.2em] uppercase text-scan-text">HorusSight</span>
               </div>
-              <p className="text-sm md:text-base lg:text-xl text-scan-text-muted leading-relaxed max-w-sm mx-auto sm:mx-0 font-medium">
+              <p className="text-sm md:text-base lg:text-xl text-scan-text-muted leading-relaxed max-w-sm mx-auto sm:mx-0 font-semibold">
                 {t('footer', 'demo_text')}
               </p>
               <div className="flex gap-6 md:gap-10 justify-center sm:justify-start">
@@ -725,7 +725,7 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme, la
 
             <div className="space-y-5 md:space-y-8 text-center sm:text-left">
               <h4 className="text-xs font-black text-scan-text uppercase tracking-[0.4em]">{t('footer', 'bulletins')}</h4>
-              <p className="text-sm md:text-base text-scan-text-muted font-medium">{t('footer', 'subscribe_msg')}</p>
+              <p className="text-sm md:text-base text-scan-text-muted font-semibold">{t('footer', 'subscribe_msg')}</p>
               <div className="relative group max-w-xs mx-auto sm:mx-0">
                 <input type="email" placeholder="mail@defense.com" className="w-full bg-scan-surface border-2 border-scan-border rounded-[2rem] px-6 py-4 text-sm focus:outline-none focus:border-indigo-600 transition-all font-mono" />
                 <button className="absolute right-2 top-2 p-3 bg-indigo-600 rounded-xl text-scan-text shadow-lg hover:bg-indigo-500 transition-all"><ChevronRight className="w-5 h-5" /></button>
@@ -1058,7 +1058,7 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
               <p className="text-3xl lg:text-5xl font-black text-scan-text tracking-tighter mb-8 leading-[0.95] uppercase">
                 {analysis.simplifiedRiskSummary || "Risk Assessment in Progress..."}
               </p>
-              <p className="text-lg text-scan-text-muted font-medium max-w-4xl leading-relaxed italic border-l-2 border-indigo-500/30 pl-8">
+              <p className="text-lg text-scan-text-muted font-semibold max-w-4xl leading-relaxed italic border-l-2 border-indigo-500/30 pl-8">
                 "{analysis.businessImpactSummary || "EWABA Analysis awaiting processing..."}"
               </p>
             </div>
@@ -1117,7 +1117,7 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
               <h2 className="text-2xl font-black uppercase tracking-[0.4em] text-scan-text drop-shadow-glow">{t('report', 'scan_in_progress')}</h2>
               <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-indigo-500/50"></div>
             </div>
-            <p className="text-scan-text-muted max-w-lg mx-auto text-sm italic font-medium leading-relaxed">
+            <p className="text-scan-text-muted max-w-lg mx-auto text-sm italic font-semibold leading-relaxed">
               {t('report', 'in_progress_msg')}
             </p>
           </div>
@@ -1157,9 +1157,9 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
                     <div className="space-y-12">
                       {Object.entries(
                         analysis.exhaustiveSolutions
-                          .filter((sol: any) => filterCategory === 'Tout' || (sol.category || 'Sécurité Générale') === filterCategory)
+                          .filter((sol: any) => filterCategory === 'All' || (sol.category || 'General Security') === filterCategory)
                           .reduce((acc: any, sol: any) => {
-                            const category = sol.category || 'Sécurité Générale';
+                            const category = sol.category || 'General Security';
                             if (!acc[category]) acc[category] = [];
                             acc[category].push(sol);
                             return acc;
@@ -1179,8 +1179,8 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
                               <div key={idx} className="p-8 lg:p-14 bg-slate-900/40 backdrop-blur-3xl border border-scan-border hover:border-indigo-500/30 transition-all rounded-[3.5rem] space-y-10 relative group overflow-hidden shadow-2xl">
                                 <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-indigo-500/10 to-transparent rounded-bl-full -z-10 group-hover:from-indigo-500/20 transition-all duration-700" />
 
-                                <div className="absolute top-6 right-10 text-[10px] font-black text-scan-text-muted opacity-40 uppercase tracking-widest bg-scan-surface/50 border border-scan-border px-3 py-1 rounded-full z-20">
-                                  Matrice Cible : {idx + 1}
+                                <div className="absolute top-8 right-12 text-[11px] font-black text-scan-text-muted opacity-60 uppercase tracking-widest bg-scan-surface/80 backdrop-blur-md border border-scan-border px-4 py-2 rounded-full z-20 shadow-2xl">
+                                  Target Matrix : {idx + 1}
                                 </div>
 
                                 <div className="flex items-center justify-between">
@@ -1208,9 +1208,9 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
                                       </div>
                                     </div>
                                   </div>
-                                  <div className="lg:text-right shrink-0 pt-4">
-                                    <p className="text-[10px] font-black text-scan-text-muted uppercase tracking-[0.35em] mb-3 opacity-60">{t('report', 'responsibility_matrix')}</p>
-                                    <Badge variant={sol.priorityLevel <= 3 ? 'Critical' : 'Info'}>{sol.responsibleParty}</Badge>
+                                  <div className="lg:text-right shrink-0 pt-4 flex flex-col items-end gap-3">
+                                    <p className="text-[11px] font-black text-scan-text-muted uppercase tracking-[0.4em] mb-1 opacity-60">{t('report', 'responsibility_matrix')}</p>
+                                    <Badge variant={sol.priorityLevel <= 3 ? 'Critical' : 'Info'} className="px-6 py-2 text-xs">{sol.responsibleParty}</Badge>
                                   </div>
                                 </div>
 
@@ -1263,54 +1263,37 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
                                   </div>
 
                                   {sol.contactTemplate && (
-                                    <div className="p-5 bg-scan-bg border-scan-border space-y-4">
+                                    <div className="p-8 md:p-12 bg-scan-bg/80 border-2 border-scan-border/50 rounded-[2.5rem] space-y-8 shadow-[0_30px_60px_rgba(0,0,0,0.5)]">
                                       <div className="flex items-center justify-between">
-                                        <span className="text-[10px] font-black text-scan-text-muted uppercase tracking-[0.2em] flex items-center gap-2">
-                                          <FileText className="w-3 h-3" />
-                                          Communication Template
-                                        </span>
+                                        <div className="space-y-2">
+                                          <span className="text-[12px] font-black text-indigo-400 uppercase tracking-[0.3em] flex items-center gap-3">
+                                            <Mail className="w-5 h-5" />
+                                            Professional Outreach Template
+                                          </span>
+                                          <p className="text-[10px] text-scan-text-muted uppercase tracking-widest opacity-60">Send this pre-written message to the technical lead for immediate patching.</p>
+                                        </div>
                                         <button
                                           onClick={() => {
                                             navigator.clipboard.writeText(sol.contactTemplate);
                                             const btn = document.getElementById(`copy-btn-${idx}`);
                                             if (btn) {
                                               const originalText = btn.innerHTML;
-                                              btn.innerHTML = 'Copied!';
-                                              btn.classList.add('bg-emerald-500/20', 'text-emerald-400');
+                                              btn.innerHTML = 'COPIED TO CLIPBOARD';
+                                              btn.classList.add('bg-emerald-500/20', 'text-emerald-400', 'scale-105');
                                               setTimeout(() => {
                                                 btn.innerHTML = originalText;
-                                                btn.classList.remove('bg-emerald-500/20', 'text-emerald-400');
-                                              }, 2000);
+                                                btn.classList.remove('bg-emerald-500/20', 'text-emerald-400', 'scale-105');
+                                              }, 3000);
                                             }
                                           }}
                                           id={`copy-btn-${idx}`}
-                                          className="group/copy flex items-center gap-1.5 px-3 py-1 bg-indigo-600/10 hover:bg-indigo-600/20 text-[9px] font-bold text-indigo-400 rounded-lg border border-indigo-500/20 transition-all hover:scale-110 active:scale-90 relative"
+                                          className="group/copy flex items-center gap-3 px-6 py-3 bg-indigo-600 text-[10px] font-black text-scan-text uppercase tracking-widest rounded-2xl transition-all hover:bg-indigo-500 hover:shadow-[0_0_30px_rgba(79,70,229,0.4)] active:scale-95 relative"
                                         >
-                                          <motion.div
-                                            animate={{ rotate: [0, -10, 10, 0] }}
-                                            transition={{ repeat: Infinity, duration: 4, times: [0, 0.1, 0.2, 0.3] }}
-                                          >
-                                            <Copy className="w-3 h-3 group-hover/copy:text-scan-text transition-colors" />
-                                          </motion.div>
+                                          <Copy className="w-4 h-4" />
                                           {t('report', 'copy_template')}
-                                          <motion.div
-                                            animate={{ x: [0, 5, 0], scale: [1, 1.2, 1] }}
-                                            transition={{ repeat: Infinity, duration: 1.5 }}
-                                            className="absolute -right-8 top-1/2 -translate-y-1/2 text-indigo-400/60 hidden group-hover/copy:block pointer-events-none"
-                                          >
-                                            <Hand className="w-5 h-5 -rotate-90" />
-                                          </motion.div>
-                                          {/* Animated Pulse Ring for priority actions */}
-                                          {sol.priorityLevel <= 3 && (
-                                            <motion.div
-                                              animate={{ scale: [1, 1.2, 1], opacity: [0, 0.3, 0] }}
-                                              transition={{ repeat: Infinity, duration: 3 }}
-                                              className="absolute inset-0 border border-indigo-500 rounded-lg pointer-events-none"
-                                            />
-                                          )}
                                         </button>
                                       </div>
-                                      <pre className="text-[10px] text-scan-text-muted font-mono bg-scan-surface/50 p-4 rounded-xl border border-scan-border/50 whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto custom-scrollbar">
+                                      <pre className="text-[11px] md:text-sm text-scan-text font-mono bg-scan-surface border-2 border-scan-border/80 p-8 md:p-10 rounded-3xl whitespace-pre-wrap leading-[1.8] shadow-inner select-all">
                                         {sol.contactTemplate}
                                       </pre>
                                     </div>
@@ -1342,7 +1325,7 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
                                           <p className="text-xs text-scan-text-muted animate-pulse font-mono uppercase tracking-[0.2em]">Deciphering vulnerability intricacies...</p>
                                         </div>
                                       ) : (
-                                        <div className="text-xs text-scan-text leading-relaxed font-medium space-y-2 whitespace-pre-wrap">
+                                        <div className="text-xs text-scan-text leading-relaxed font-semibold space-y-2 whitespace-pre-wrap">
                                           {aiChatResponse}
                                         </div>
                                       )}
@@ -1483,7 +1466,7 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
                       {t('report', 'simplified_summary')}
                     </h5>
                     <div className="p-4 bg-amber-500/5 border border-amber-500/10 rounded-2xl">
-                      <p className="text-sm text-amber-200/80 leading-relaxed font-medium">"{analysis.simplifiedRiskSummary}"</p>
+                      <p className="text-sm text-amber-200/80 leading-relaxed font-semibold">"{analysis.simplifiedRiskSummary}"</p>
                     </div>
                   </div>
 
@@ -1726,7 +1709,7 @@ const AuthPage = ({ onAuthSuccess, theme, toggleTheme, lang, toggleLang, t }: an
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-scan-bg text-scan-text transition-colors duration-300">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,rgba(79,70,229,0.15),transparent_60%)] -z-10"></div>
-      <Card className="w-full max-w-md !p-6 md:!p-10 bg-scan-surface border-scan-border backdrop-blur-xl shadow-2xl relative overflow-hidden">
+      <Card className="w-full max-w-md !p-10 md:!p-16 bg-scan-surface border-scan-border backdrop-blur-xl shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-indigo-600 to-transparent"></div>
         <div className="text-center mb-6 md:mb-10 space-y-2">
           <div className="mx-auto w-12 h-12 md:w-14 md:h-14 bg-indigo-600 rounded-xl flex items-center justify-center text-scan-text shadow-xl shadow-indigo-900/40 mb-4">
@@ -1745,7 +1728,7 @@ const AuthPage = ({ onAuthSuccess, theme, toggleTheme, lang, toggleLang, t }: an
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-10 md:space-y-16">
           {error && <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[10px] font-bold text-center uppercase tracking-widest">{error}</div>}
 
           <div className="space-y-2">
