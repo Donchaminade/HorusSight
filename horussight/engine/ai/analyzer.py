@@ -34,16 +34,16 @@ class EWABAAnalyzer:
             return self._get_mock_analysis(target, findings)
 
         prompt = f"""
-        En tant qu'expert en cybersécurité de haut niveau (Ewaba Intelligence), effectue une analyse de risque 
-        pour la cible {target} basée sur ces vulnérabilités : {json.dumps(findings)}.
+        As a world-class cybersecurity expert (Ewaba Intelligence), perform a comprehensive risk analysis 
+        for the target {target} based on these detected vulnerabilities: {json.dumps(findings)}.
         
-        TON OBJECTIF : Communiquer clairement aux DEUX publics (le développeur et le directeur non-technique).
+        YOUR OBJECTIVE: Communicate clearly to TWO audiences (the technical developer and the non-technical executive/business owner).
         
-        Rendu requis : Objet JSON strictement valide respectant cette structure exacte :
+        Required Output: Strictly valid JSON object matching this exact structure:
         {{
           "overallRiskScore": integer (0-100),
-          "businessImpactSummary": "string impact professionnel en français",
-          "simplifiedRiskSummary": "analogie SIMPLE et IMAGEE (ex: la maison, la voiture) pour un non-informaticien",
+          "businessImpactSummary": "string describing professional business impact in English",
+          "simplifiedRiskSummary": "a SIMPLE and METAPHORICAL analogy (e.g., using a house, a car, or a vault) for a non-technical person",
           "remediationRoadmap": {{
             "immediate": ["Action 1", "Action 2"],
             "shortTerm": ["Action 3"],
@@ -52,19 +52,19 @@ class EWABAAnalyzer:
           "severityClassification": "Critical" | "High" | "Medium" | "Low",
           "exhaustiveSolutions": [
             {{
-              "category": "string (ex: XSS, SQLi, Headers)",
-              "description": "Explication technique précise de la faille",
-              "simplifiedSummary": "Explication vulgarisée pour quelqu'un qui n'y connaît rien",
-              "action": "Instructions techniques précises (Incluez des extraits de code ou de config si possible)",
-              "responsibleParty": "Développeur" | "Admin Systèmes" | "Expert Sécurité",
+              "category": "string (e.g., XSS, SQLi, Security Headers)",
+              "description": "Precise technical explanation of the vulnerability",
+              "simplifiedSummary": "Simplified explanation for someone with no IT background",
+              "action": "Precise technical instructions (Include code snippets or configuration examples if possible)",
+              "responsibleParty": "Developer" | "System Admin" | "Security Expert",
               "priorityLevel": integer (1-10, 1=Urgent),
-              "precautions": "Précautions avant application",
-              "contactAdvice": "À qui parler de ce problème ?",
-              "contactChannels": ["Email", "Slack", "Réunion"],
-              "contactTemplate": "Message prêt à l'emploi (poli et pro) pour signaler le problème",
+              "precautions": "Precautions to take before applying the fix",
+              "contactAdvice": "Who should be informed about this issue?",
+              "contactChannels": ["Email", "Slack", "Meeting"],
+              "contactTemplate": "Ready-to-use professional message template to report the issue",
               "remediationChecklist": [
-                 "Etape 1 de vérification technique",
-                 "Etape 2 de validation métier"
+                 "Step 1: Technical verification",
+                 "Step 2: Business validation"
               ]
             }}
           ]
@@ -80,7 +80,7 @@ class EWABAAnalyzer:
                 )
             )
             
-            # Utilisation directe du parseur JSON si response_mime_type est respecté
+            # Directly parse the JSON if response_mime_type is respected
             return json.loads(response.text)
             
         except Exception as e:
@@ -89,30 +89,30 @@ class EWABAAnalyzer:
 
     def _get_mock_analysis(self, target, findings) -> dict:
         """
-        Retourne une analyse de haute qualité par défaut en cas d'erreur API ou clé manquante.
+        Returns a high-quality fallback analysis in case of API error or missing key.
         """
         return {
             "overallRiskScore": 65 if findings else 10,
-            "businessImpactSummary": "L'absence de headers de sécurité ou la présence de failles d'injection expose votre infrastructure à des attaques critiques.",
-            "simplifiedRiskSummary": "Votre périmètre est comme une forteresse avec de hauts murs mais des couloirs de communication publics non cryptés.",
+            "businessImpactSummary": "The lack of security headers or the presence of injection vulnerabilities exposes your infrastructure to critical attacks.",
+            "simplifiedRiskSummary": "Your perimeter is like a fortress with high walls but unencrypted public communication corridors.",
             "remediationRoadmap": {
-                "immediate": ["Appliquer les headers de sécurité manquants", "Nettoyer les inputs utilisateurs"],
-                "shortTerm": ["Audit d'architecture", "Mise en place d'un WAF"],
-                "longTerm": ["CI/CD Security Scanning"]
+                "immediate": ["Apply missing security headers", "Sanitize user inputs"],
+                "shortTerm": ["Architecture audit", "Implement a WAF"],
+                "longTerm": ["CI/CD Security Scanning integration"]
             },
             "severityClassification": "High" if findings else "Low",
             "exhaustiveSolutions": [
                 {
                     "category": findings[0]['type'] if findings else "Configuration",
-                    "description": "Correction technique de la faille détectée.",
-                    "simplifiedSummary": "Verrouillage des accès",
-                    "action": "Utiliser des requêtes préparées ou des politiques CSP strictes.",
+                    "description": "Technical correction of the detected vulnerability.",
+                    "simplifiedSummary": "Locking down access points",
+                    "action": "Use prepared statements or strict Content Security Policies.",
                     "responsibleParty": "Developer",
                     "priorityLevel": 1,
-                    "precautions": "Testez en staging.",
-                    "contactAdvice": "Informez le CTO.",
+                    "precautions": "Test in staging environment first.",
+                    "contactAdvice": "Inform the CTO or IT Lead.",
                     "contactChannels": ["Email"],
-                    "contactTemplate": "Bonjour, une faille a été détectée...",
+                    "contactTemplate": "Hello, a security vulnerability has been detected...",
                     "remediationChecklist": ["Fix", "Test", "Deploy"]
                 }
             ]

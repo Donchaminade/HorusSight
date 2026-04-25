@@ -41,6 +41,22 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import {
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  Radar
+} from 'recharts';
 import api from '@/lib/api';
 import { i18n } from '@/lib/translations';
 import {
@@ -144,6 +160,18 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView, t }
     { label: 'Critical', value: criticalVuls, icon: Shield, color: 'text-rose-500', gradient: 'from-rose-600/5' },
   ];
 
+  const chartData = [
+    { name: 'SQLi', value: scans.reduce((a, s) => a + (s.vulnerabilities?.filter(v => v.type === 'SQL Injection').length || 0), 0) },
+    { name: 'XSS', value: scans.reduce((a, s) => a + (s.vulnerabilities?.filter(v => v.type === 'XSS').length || 0), 0) },
+    { name: 'SSRF', value: scans.reduce((a, s) => a + (s.vulnerabilities?.filter(v => v.type === 'Server-Side Request Forgery').length || 0), 0) },
+    { name: 'Other', value: scans.reduce((a, s) => a + (s.vulnerabilities?.filter(v => !['SQL Injection', 'XSS', 'Server-Side Request Forgery'].includes(v.type)).length || 0), 0) },
+  ].filter(d => d.value > 0);
+
+  // Default data if no vulns
+  const finalChartData = chartData.length > 0 ? chartData : [{ name: 'Safe', value: 1 }];
+
+  const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+
   return (
     <div className="space-y-5 md:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <header className="relative py-6 md:py-12 mb-6 md:mb-12 border-b border-scan-border/40 group overflow-hidden">
@@ -201,6 +229,64 @@ const Dashboard = ({ scans, logs, onSelectScan, onNewScan, isGuest, setView, t }
             </div>
           </Card>
         ))}
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Card title="Threat Intelligence Matrix" icon={BrainCircuit}>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={finalChartData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                  stroke="none"
+                >
+                  {finalChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px' }}
+                  itemStyle={{ color: '#f8fafc' }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6 mt-4">
+            {finalChartData.map((d, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }}></div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-scan-text-muted">{d.name}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card title="Scan Activity Trends" icon={Activity}>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={scans.slice(0, 7).reverse().map((s, i) => ({ name: `Scan ${i+1}`, val: s.vulnerabilities?.length || 0 }))}>
+                <defs>
+                  <linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                <XAxis dataKey="name" stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
+                <YAxis stroke="#64748b" fontSize={10} tickLine={false} axisLine={false} />
+                <Tooltip 
+                   contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '12px' }}
+                />
+                <Area type="monotone" dataKey="val" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#colorVal)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -326,7 +412,7 @@ const NewScan = ({ onStartScan, loading, t }: any) => {
             loading={loading}
             icon={Zap}
           >
-            Démarrer l'Analyse
+            Launch Analysis
           </Button>
         </form>
       </Card>
@@ -521,7 +607,7 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme, la
               <div className="flex flex-col gap-3 md:gap-0 md:relative">
                 <input
                   type="url"
-                  placeholder="https://votre-infrastructure.com"
+                  placeholder="https://your-infrastructure.com"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   className="w-full bg-scan-bg border-2 border-scan-border rounded-2xl md:rounded-[3rem] py-4 md:py-10 px-6 md:px-14 text-scan-text focus:outline-none focus:border-indigo-600 transition-all font-mono text-base md:text-xl shadow-inner"
@@ -534,11 +620,11 @@ const LandingPage = ({ onGuestScan, scanLoading, onLogin, theme, toggleTheme, la
                     onClick={() => onGuestScan(url)}
                     icon={Target}
                   >
-                    Infiltrer
+                    Infiltrate
                   </Button>
                 </div>
               </div>
-              <p className="mt-4 text-center text-[10px] uppercase tracking-[0.4em] text-scan-text-muted font-bold opacity-40">Protocole guest — Isolation Temporaire</p>
+              <p className="mt-4 text-center text-[10px] uppercase tracking-[0.4em] text-scan-text-muted font-bold opacity-40">Guest Protocol — Temporary Isolation</p>
             </div>
           </div>
         </div>
@@ -671,7 +757,7 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
   const [queryingVuln, setQueryingVuln] = useState<any>(null);
   const [aiChatResponse, setAiChatResponse] = useState<string>('');
   const [isQueryLoading, setIsQueryLoading] = useState(false);
-  const [filterCategory, setFilterCategory] = useState('Tout');
+  const [filterCategory, setFilterCategory] = useState('All');
 
   const handleAskAI = async (vuln: any, context: string) => {
     setQueryingVuln(vuln);
@@ -962,20 +1048,51 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
       </div>
 
       {!analysis || !analysis.exhaustiveSolutions ? null : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
-          <div className="lg:col-span-12">
-            <div className="p-8 lg:p-12 bg-indigo-500/5 border border-indigo-500/10 rounded-[2.5rem] relative overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12 items-stretch">
+          <div className="lg:col-span-8">
+            <div className="h-full p-8 lg:p-12 bg-indigo-500/5 border border-indigo-500/10 rounded-[2.5rem] relative overflow-hidden">
               <div className="absolute top-0 right-0 p-8">
                 <BrainCircuit className="w-12 h-12 text-indigo-500/20" />
               </div>
               <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-500 mb-6 italic">{t('report', 'ai_intelligence')}</h2>
               <p className="text-3xl lg:text-5xl font-black text-scan-text tracking-tighter mb-8 leading-[0.95] uppercase">
-                {analysis.simplifiedRiskSummary || "Calcul de l'impact en cours..."}
+                {analysis.simplifiedRiskSummary || "Risk Assessment in Progress..."}
               </p>
               <p className="text-lg text-scan-text-muted font-medium max-w-4xl leading-relaxed italic border-l-2 border-indigo-500/30 pl-8">
-                "{analysis.businessImpactSummary || "Analyse EWABA en attente de traitement..."}"
+                "{analysis.businessImpactSummary || "EWABA Analysis awaiting processing..."}"
               </p>
             </div>
+          </div>
+          
+          <div className="lg:col-span-4">
+            <Card title="Attack Surface Analysis" icon={Target} className="h-full !p-4">
+              <div className="h-[250px] w-full mt-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart cx="50%" cy="50%" outerRadius="80%" data={[
+                    { subject: 'Injection', A: scan.vulnerabilities.filter(v => v.type.includes('Injection') || v.type.includes('XSS')).length * 20, fullMark: 100 },
+                    { subject: 'Privacy', A: scan.vulnerabilities.filter(v => v.type.includes('SSRF')).length * 50, fullMark: 100 },
+                    { subject: 'Infrastructure', A: scan.vulnerabilities.filter(v => v.type.includes('Header')).length * 15, fullMark: 100 },
+                    { subject: 'Config', A: 40, fullMark: 100 },
+                    { subject: 'Auth', A: 20, fullMark: 100 },
+                  ].map(d => ({ ...d, A: Math.min(d.A, 100) }))}>
+                    <PolarGrid stroke="#1e293b" />
+                    <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 10 }} />
+                    <Radar
+                      name="Attack Surface"
+                      dataKey="A"
+                      stroke="#6366f1"
+                      fill="#6366f1"
+                      fillOpacity={0.5}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="text-center mt-4">
+                <p className="text-[10px] font-black uppercase tracking-widest text-scan-text-muted">
+                  Post-Analysis Vulnerability Mapping
+                </p>
+              </div>
+            </Card>
           </div>
         </div>
       )}
@@ -1017,13 +1134,13 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
                 {!analysis || !analysis.exhaustiveSolutions || analysis.exhaustiveSolutions.length === 0 ? (
                   <div className="text-center py-12 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl">
                     <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto mb-4" />
-                    <h3 className="font-bold text-emerald-400">Accès Sécurisé : Vérifié</h3>
-                    <p className="text-sm text-scan-text-muted">Aucune vulnérabilité identifiée sur cette trajectoire.</p>
+                    <h3 className="font-bold text-emerald-400">Secure Access: Verified</h3>
+                    <p className="text-sm text-scan-text-muted">No vulnerabilities identified in this trajectory.</p>
                   </div>
                 ) : (
                   <>
                     <div className="flex flex-wrap gap-2 mb-8 p-1 bg-scan-surface rounded-2xl border border-scan-border/50">
-                      {[t('common', 'all'), ...new Set(analysis.exhaustiveSolutions.map((s: any) => s.category || 'Sécurité Générale'))].map((cat: any) => (
+                      {[t('common', 'all'), ...new Set(analysis.exhaustiveSolutions.map((s: any) => s.category || 'General Security'))].map((cat: any) => (
                         <button
                           key={cat}
                           onClick={() => setFilterCategory(cat)}
@@ -1313,7 +1430,7 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
                       {(scan.logs || []).length === 0 && (
                         <div className="flex flex-col items-center justify-center h-full space-y-4 opacity-40">
                           <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-                          <p className="text-[10px] uppercase tracking-widest text-center">Initialisation des protocoles tactiques...</p>
+                          <p className="text-[10px] uppercase tracking-widest text-center">Initializing tactical protocols...</p>
                         </div>
                       )}
                     </div>
@@ -1321,7 +1438,7 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
                   </div>
                   <div className="p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Calcul Threadé</span>
+                      <span className="text-[9px] font-black text-indigo-400 uppercase tracking-widest">Threaded Computation</span>
                       <span className="text-[9px] font-mono text-indigo-400/60">Full Power Mode</span>
                     </div>
                     <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
@@ -1378,10 +1495,10 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
                   </div>
 
                   <div className="space-y-6 pt-6 border-t border-scan-border">
-                    <h5 className="text-[10px] font-bold text-scan-text-muted uppercase tracking-widest">Plan de Remédiation</h5>
+                    <h5 className="text-[10px] font-bold text-scan-text-muted uppercase tracking-widest">{t('report', 'remediation_strategy')}</h5>
                     {[
-                      { label: 'Phase Prioritaire', items: analysis.remediationRoadmap.immediate, color: 'text-rose-500' },
-                      { label: 'Stratégie Court Terme', items: analysis.remediationRoadmap.shortTerm, color: 'text-scan-text' },
+                      { label: 'Priority Phase', items: analysis.remediationRoadmap.immediate, color: 'text-rose-500' },
+                      { label: 'Short-Term Strategy', items: analysis.remediationRoadmap.shortTerm, color: 'text-scan-text' },
                     ].map((phase, i) => phase.items.length > 0 && (
                       <div key={i} className="space-y-3">
                         <p className={`text-[10px] font-bold uppercase tracking-[0.15em] ${phase.color}`}>{phase.label}</p>
@@ -1397,7 +1514,7 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
                   </div>
                 </div>
               ) : (
-                <p className="text-xs text-zinc-600 text-center py-8 italic font-light opacity-60">Terminez un scan pour générer une intelligence contextuelle.</p>
+                <p className="text-xs text-zinc-600 text-center py-8 italic font-light opacity-60">Complete a scan to generate contextual intelligence.</p>
               )}
             </Card>
 
@@ -1406,7 +1523,7 @@ const ReportView = ({ scanId, onBack, isGuest, t }: any) => {
                 {[
                   { label: t('report', 'total_duration'), value: `${((scan.duration || 0) / 1000).toFixed(2)}s` },
                   { label: t('report', 'endpoints'), value: scan.endpoints?.length || 0 },
-                  { label: t('report', 'precision_level'), value: 'Haute-Fidélité (DeepScan)' },
+                  { label: t('report', 'precision_level'), value: 'High-Fidelity (DeepScan)' },
                   { label: t('report', 'active_engine'), value: 'Horus Engine v2.4' }
                 ].map((m, i) => (
                   <div key={i} className="flex justify-between items-center text-sm">
@@ -1845,7 +1962,7 @@ export default function App() {
               >
                 <div className="flex items-center gap-4">
                   {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-indigo-400" />}
-                  <span className="font-bold text-xs uppercase tracking-widest">{theme === 'dark' ? (lang === 'en' ? 'Light Mode' : 'Mode Clair') : (lang === 'en' ? 'Dark Mode' : 'Mode Sombre')}</span>
+                  <span className="font-bold text-xs uppercase tracking-widest">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
                 </div>
                 <div className="w-8 h-4 bg-scan-border rounded-full relative">
                   <motion.div

@@ -1,175 +1,128 @@
-# 🛡️ HorusSight Frontend Documentation
+# 🛡️ HorusSight — Advanced Cybersecurity Scanning Platform
 
-[English version](#english-version) | [Version Française](#version-française)
+HorusSight is a premium, high-performance cybersecurity platform designed for automated vulnerability scanning, real-time threat intelligence, and AI-driven remediation analysis. It combines a robust Next.js frontend with a powerful multi-threaded Python scanning engine.
 
 ---
 
-<a name="english-version"></a>
+## 🚀 How It Works
 
-## 🇺🇸 English Version
+HorusSight operates in four distinct phases to ensure comprehensive security coverage:
 
-This documentation details the operation, architecture, and technologies used for the **HorusSight** platform interface.
+1.  **Tactical Infiltration (Crawling)**: The platform's crawler maps the target URL, identifying all accessible pages, forms, and input parameters.
+2.  **Full Power Scanning**: A multi-threaded engine (running up to 15 parallel workers) probes identified entry points for critical vulnerabilities like SQLi, XSS, SSRF, Command Injection, and more.
+3.  **EWABA Intelligence**: The raw scan findings are processed by the **EWABA (Expert Vulnerability Analysis & Business Assessment)** AI engine (powered by Google Gemini). It provides business impact analysis and prioritized remediation steps.
+4.  **Reporting & Mitigation**: Detailed reports are generated, providing actionable patches and a strategic communication template for stakeholders.
 
-### 🛠️ Tech Stack
-- **Framework**: Next.js 15.5+ (App Router)
+---
+
+## 🛠️ Technology Stack
+
+### Frontend & API Gateway
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS (Custom Design System)
-- **Animations**: Framer Motion (Fluid transitions, parallax, dynamic entries)
-- **Icons**: Lucide React
-- **Reporting**: jsPDF (Client-side PDF generation)
-- **AI**: Google Generative AI SDK (EWABA Insight Engine)
+- **Styling**: Tailwind CSS 4 (Custom Design System with Glassmorphism)
+- **Animations**: Framer Motion (Fluid transitions & parallax effects)
+- **State Management**: React Context & Hooks
+- **PDF Generation**: jsPDF
+
+### Backend Engine (Python)
+- **Core Orchestrator**: Python 3.10+
+- **Concurrency**: `concurrent.futures` (ThreadPoolExecutor)
+- **Database**: SQLite (Persistent storage for scan history)
+- **AI Integration**: Google Generative AI (Gemini Pro/Flash)
 
 ---
 
-### 🏗️ Code Architecture
+## 📋 Prerequisites
 
-#### 1. File Structure
-- `/app`: Route configuration (Next.js App Router).
-- `/components`: Reusable UI components.
-    - `App.tsx`: The heart of the application (Main Controller).
-- `/lib`:
-    - `translations.ts`: Centralized bilingual dictionary.
-    - `aiService.ts`: Bridge with Gemini AI.
-    - `store.ts`: Scan state management (Mock Store).
-- `/api`: Next.js API routes serving as a gateway to the Python engine.
+Before launching HorusSight, ensure you have the following installed:
 
-#### 2. The Master Component (`App.tsx`)
-The `App.tsx` file manages main navigation via a simple state machine (`view`):
-- `landing`: Home page with Hero Slideshow.
-- `dashboard`: Analyst's main dashboard.
-- `logs`: Deep packet inspection console.
-- `report`: Detailed vulnerability view and AI analysis.
+- **Node.js**: v18.17.0 or higher
+- **npm**: v9.0.0 or higher
+- **Python**: v3.10 or higher
+- **Python Packages**:
+  - `requests`
+  - `beautifulsoup4`
+  - `google-generativeai`
+  - `python-dotenv`
+- **Gemini API Key**: Obtainable from [Google AI Studio](https://aistudio.google.com/)
 
 ---
 
-### 🌐 Translation System (i18n)
+## ⚙️ Configuration
 
-HorusSight uses a "Zero-Dependency" dynamic translation system:
-- **Source**: `horussight/lib/translations.ts`.
-- **Usage**: A `t(section, key)` function is injected into all components. It automatically detects the selected language (`en` or `fr`) persisted in `localStorage`.
-- **Adding a language**: Simply add a key to the `i18n` object to support a new language.
+1.  **Clone the Repository**:
+    ```bash
+    git clone https://github.com/Donchaminade/HorusSight.git
+    cd HorusSight/horussight
+    ```
 
----
+2.  **Frontend Dependencies**:
+    ```bash
+    npm install
+    ```
 
-### 🧬 Interaction with Python Engine
+3.  **Python Engine Dependencies**:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-The Frontend communicates with the scanner via the internal `/api/scans` API:
-1. **POST Request**: Initializes a scan with the target URL.
-2. **Process Spawning**: The Next.js server launches `main.py` via `child_process.spawn`.
-3. **Log Streaming**: `LOG:` messages from the Python script are retrieved in real-time by the API and sent back to the interface via a polling/state system.
-4. **JSON Parsing**: Once the scan is complete, the raw JSON is parsed and transformed into a displayable `Scan` object.
+4.  **Environment Variables**:
+    Create a `.env` file in the `horussight` directory:
+    ```env
+    # Required for AI Analysis
+    GEMINI_API_KEY="your_actual_api_key_here"
 
----
-
-### 📊 Key Features
-
-#### Tactical Dashboard
-Displays critical metrics (Scan time, critical vulnerabilities, active targets) as aerated status cards with gradient and blur effects (Glassmorphism).
-
-#### Live Terminal
-A real-time inspection view simulating packet capture. Each event is clickable to obtain "automated mitigation" and a patch deployment plan.
-
-#### EWABA Intelligence
-The `ReportView` component sends scan data to the Gemini AI. The AI returns:
-- A business impact analysis.
-- A remediation strategy by urgency level.
-- A communication template for stakeholders.
+    # For Secure Session Management
+    JWT_SECRET="your_random_secure_secret"
+    ```
 
 ---
 
-### 🚀 Installation & Development
+## 🚀 Launching the Platform
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Run the development server:
-   ```bash
-   npm run dev
-   ```
+### Development Mode
+To start the Next.js frontend and the API gateway:
+```bash
+npm run dev
+```
+The platform will be available at [http://localhost:3000](http://localhost:3000).
 
----
-
-<a name="version-française"></a>
-
-## 🇫🇷 Version Française
-
-Cette documentation détaille le fonctionnement, l'architecture et les technologies utilisées pour l'interface de la plateforme **HorusSight**.
-
-### 🛠️ Stack Technologique
-- **Framework** : Next.js 15.5+ (App Router)
-- **Langage** : TypeScript
-- **Styling** : Tailwind CSS (Design System sur mesure)
-- **Animations** : Framer Motion (Transitions fluides, parallaxe, entrées dynamiques)
-- **Icônes** : Lucide React
-- **Rapports** : jsPDF (Génération PDF côté client)
-- **IA** : Google Generative AI SDK (Moteur EWABA Insight)
+### Running a Scan
+1.  Navigate to the **Dashboard**.
+2.  Enter a target URL (e.g., `http://example.com`).
+3.  Click **Initiate Tactical Scan**.
+4.  Monitor real-time progress in the **Live Terminal**.
 
 ---
 
-### 🏗️ Architecture du Code
+## 📁 Project Structure
 
-#### 1. Structure des Fichiers
-- `/app` : Configuration des routes (Next.js App Router).
-- `/components` : Composants UI réutilisables.
-    - `App.tsx` : Le cœur de l'application (Main Controller).
-- `/lib` :
-    - `translations.ts` : Dictionnaire bilingue centralisé.
-    - `aiService.ts` : Pont avec l'IA Gemini.
-    - `store.ts` : Gestion de l'état des scans (Mock Store).
-- `/api` : Routes API Next.js servant de passerelle vers le moteur Python.
-
-#### 2. Le Composant Maître (`App.tsx`)
-Le fichier `App.tsx` gère la navigation principale via une machine à états simple (`view`) :
-- `landing` : Page d'accueil avec Hero Slideshow.
-- `dashboard` : Tableau de bord principal de l'analyste.
-- `logs` : Console d'inspection profonde des paquets.
-- `report` : Vue détaillée des vulnérabilités et analyse IA.
+-   `/app`: Next.js App Router (Layouts and API routes).
+-   `/components`: Premium UI components (Hero, Dashboard, Terminal).
+-   `/engine`: The heart of the platform (Python).
+    -   `/core`: Orchestrator and Crawler.
+    -   `/modules`: Vulnerability detectors (SQLi, XSS, etc.).
+    -   `/ai`: EWABA AI Analysis engine.
+-   `/lib`: Core utilities (AI Service, Translations, Database bridge).
+-   `/public`: Static assets and Service Workers.
 
 ---
 
-### 🌐 Système de Traduction (i18n)
+## 🌐 Bilingual Support
 
-HorusSight utilise un système de traduction dynamique "Zero-Dependency" :
-- **Source** : `horussight/lib/translations.ts`.
-- **Utilisation** : Une fonction `t(section, key)` est injectée dans tous les composants. Elle détecte automatiquement la langue sélectionnée (`en` ou `fr`) persistée dans le `localStorage`.
-- **Ajout d'une langue** : Il suffit d'ajouter une clé dans l'objet `i18n` pour supporter une nouvelle langue.
-
----
-
-### 🧬 Interaction avec le Moteur Python
-
-Le Frontend communique avec le scanner via l'API interne `/api/scans` :
-1. **Requête POST** : Initialise un scan avec l'URL cible.
-2. **Process Spawning** : Le serveur Next.js lance `main.py` via un `child_process.spawn`.
-3. **Streaming des Logs** : Les messages `LOG:` du script Python sont récupérés en temps réel par l'API et renvoyés à l'interface via un système de polling/state.
-4. **Parsing JSON** : Une fois le scan terminé, le JSON brut est parsé et transformé en objet `Scan` affichable.
+HorusSight features a built-in "Zero-Dependency" translation system.
+-   Toggle between **English** and **French** directly from the UI.
+-   Language preferences are persisted in `localStorage`.
+-   Translation dictionary located at `lib/translations.ts`.
 
 ---
 
-### 📊 Fonctionnalités Clés
+## 📧 Support & Contact
 
-#### Dashboard Tactique
-Affiche des métriques critiques (Temps de scan, vulnérabilités critiques, cibles actives) sous forme de cartes d'état aérez avec des effets de dégradés et de flou (Glassmorphism).
-
-#### Live Terminal
-Une vue dédiée à l'inspection en temps réel qui simule une capture de paquets. Chaque événement est cliquable pour obtenir une "atténuation automatisée" et un plan de déploiement de correctif.
-
-#### Intelligence EWABA
-Le composant `ReportView` envoie les données de scan à l'IA Gemini. L'IA retourne :
-- Une analyse d'impact business.
-- Une stratégie de remédiation par niveau d'urgence.
-- Un template de communication pour les parties prenantes.
+-   **Developer**: [Le_meneur Donchaminade](https://www.linkedin.com/in/chaminadeadjolou)
+-   **Email**: contact@horussight.io
+-   **License**: Private / Proprietary
 
 ---
-
-### 🚀 Installation & Développement
-
-1. Installer les dépendances :
-   ```bash
-   npm install
-   ```
-2. Lancer le serveur de développement :
-   ```bash
-   npm run dev
-   ```
+*© 2026 HorusSight. Precision Security for the Digital Age.*

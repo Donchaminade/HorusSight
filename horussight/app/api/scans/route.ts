@@ -28,6 +28,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'URL is required' }, { status: 400 });
     }
 
+    // URL Validation & Sanitization
+    try {
+      const parsedUrl = new URL(url);
+      if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+        throw new Error('Invalid protocol');
+      }
+      // Prevent scanning local network or internal IPs
+      const hostname = parsedUrl.hostname.toLowerCase();
+      const forbiddenHostnames = ['localhost', '127.0.0.1', '0.0.0.0', '169.254.169.254'];
+      if (forbiddenHostnames.includes(hostname) || hostname.endsWith('.local')) {
+        return NextResponse.json({ error: 'Scanning internal or local targets is prohibited.' }, { status: 403 });
+      }
+    } catch (e) {
+      return NextResponse.json({ error: 'Invalid URL format' }, { status: 400 });
+    }
+
     const scanId = `scan_${Date.now()}`;
     const newScan = {
       id: scanId,

@@ -114,7 +114,7 @@ export const i18n = {
       endpoints: "Endpoints",
       ai_intelligence: "Contextual Intelligence",
       ai_waiting: "Finish a scan to generate contextual intelligence.",
-      roadmap: "Remediation Tactique",
+      roadmap: "Tactical Remediation",
       scan_metrics: "Scan Metrics",
       total_duration: "Total Duration",
       precision_level: "Precision Level",
@@ -138,7 +138,7 @@ export const i18n = {
       loading_report: "Aggregating vulnerability data...",
       verified_ewaba: "Verified EWABA Logic",
       responsibility_matrix: "Responsibility Matrix",
-      engine_msg: "Ewaba Engine: \"Initialisation des protocoles d'attaque et de crawl récursif. Toutes les actions sont journalisées pour conformité.\""
+      engine_msg: "Ewaba Engine: \"Initializing attack protocols and recursive crawl. All actions are logged for compliance.\""
     },
     logs: {
       live_capture: "Live Capture Enabled",
